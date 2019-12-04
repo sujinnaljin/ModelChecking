@@ -8,10 +8,27 @@ VAR
 red: { 101, 102, 103, 104, 105, 106, 107, 201, 202, 203, 204, 205, 206, 207, 301, 302, 303, 304, 305, 306, 307, 401, 402, 403, 404, 405, 406, 407, 999 };
 black: { 101, 102, 103, 104, 105, 106, 107, 201, 202, 203, 204, 205, 206, 207, 301, 302, 303, 304, 305, 306, 307, 401, 402, 403, 404, 405, 406, 407 };
 turn : boolean;
+redUp :  1..1000;
+redDown :  1..1000;
+redLeft :  1..1000;
+redRight :  1..1000;
+blackUp :  1..1000;
+blackDown :  1..1000;
+blackLeft :  1..1000;
+blackRight :  1..1000;
 
 DEFINE
 notLeft := black=101 | black=201 | black=202 | black=203 | black=301 | black=306 | black=307 | black=401;
--- fill here
+-- fill here : 스테이지 인코딩
+notRight := black=107 | black=207 | black=307 | black=407 | black=201 | black=202 | black=305 | black=306;
+notUp := black=101 | black=102 | black=103 | black=104 | black=105 | black=106 | black=107 | black=302 | black=406;
+notDown := black=401 | black=402 | black=403 | black=404 | black=405 | black=406 | black=407 | black=202 | black=306;
+
+notLeftT := red=101 | red=201 | red=202 | red=203 | red=301 | red=306 | red=307 | red=401;
+notRightT := red=107 | red=207 | red=307 | red=407 | red=201 | red=202 | red=305 | red=306;
+notUpT := red=101 | red=102 | red=103 | red=104 | red=105 | red=106 | red=107 | red=302 | red=406;
+notDownT := red=401 | red=402 | red=403 | red=404 | red=405 | red=406 | red=407 | red=202 | red=306;
+-- 계단 안을 거치거나 들어갈 수 있다는 가정하에 인코딩
 
 redStart := 203;
 redGoal := 402;
@@ -21,9 +38,59 @@ ASSIGN
 init(turn) := TRUE;
 next(turn) := !turn;
 init(red) := redStart;
--- fill here
+-- fill here : 테세우스 움직임 명세.
+redUp := red - 100;
+redDown := red + 100;
+redLeft := red - 1;
+redRight := red + 1;
+blackUp := black - 100;
+blackDown := black + 100;
+blackLeft := black - 1;
+blackRight := black + 1;
+
+next(red) :=  case
+(!notUpT) & (!notDownT) & (!notLeftT) & (!notRightT) & (turn): {redUp, redDown, redLeft, redRight};
+
+(!notUpT) & (!notDownT) & (!notLeftT) & (turn): {redUp, redDown, redLeft};
+(!notUpT) & (!notDownT) & (!notRightT) & (turn): {redUp, redDown, redRight};
+(!notUpT) & (!notLeftT) & (!notRightT) & (turn): {redUp, redLeft, redRight};
+(!notDownT) & (!notLeftT) & (!notRightT) & (turn): {redDown, redLeft, redRight};
+
+(!notUpT) & (!notDownT) & (turn): {redUp, redDown};
+(!notUpT) & (!notLeftT)  & (turn): {redUp, redLeft};
+(!notUpT) & (!notRightT) & (turn): {redUp, redRight};
+(!notDownT) & (!notLeftT) & (turn): {redDown, redLeft};
+(!notDownT) & (!notRightT) & (turn): {redDown, redRight};
+(!notLeftT) & (!notRightT) & (turn): {redLeft, redRight};
+
+(!notUpT) & (turn): {redUp};
+(!notDownT) & (turn): {redDown};
+(!notLeftT) & (turn): {redLeft};
+(!notRightT) & (turn): {redRight};
+esac;
 
 init(black) := blkStart;
--- fill here
+-- fill here : 미노타우르스 움직임 명세 . 미노타우르스 움직이는 룰 이해해서 인코딩해서 채워넣으면 됨
+next(black) :=  case
+((red mod 100)  > (black mod 100)) & (!notRight) : blackRight;
 
-LTLSPEC -- fill here
+((red mod 100)  < (black mod 100)) & (!notLeft) : blackLeft;
+
+(((red mod 100) = (black mod 100)) |
+(notLeft & notRight) |
+(notLeft & ((red mod 100)  < (black mod 100))) |
+(notRight & ((red mod 100)  > (black mod 100)))) &
+((red / 100) > (black / 100)) &
+(!notUp) : blackUp;
+
+(((red mod 100)  = (black mod 100)) |
+(notLeft & notRight) |
+(notLeft & ((red mod 100)  < (black mod 100))) |
+(notRight & ((red mod 100)  > (black mod 100)))) & 
+((red / 100) < (black / 100)) & 
+(!notDown) : blackDown;
+esac;
+
+LTLSPEC -- fill here : 검증하고자하는 속성 명세
+-- assert ~(red = redGoal & 테세우스 안잡힘);
+! G ((!(red = black)) U (red = redGoal));
