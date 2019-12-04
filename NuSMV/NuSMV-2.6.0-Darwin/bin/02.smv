@@ -1,0 +1,29 @@
+-- ���� : 02.lvl
+-- �� ũ��: 4  �� ũ��: 7
+-- �׼��콺��ġ: 203
+-- �̳�Ÿ����ġ: 201
+-- ����ġ      : 402
+MODULE main
+VAR
+red: { 101, 102, 103, 104, 105, 106, 107, 201, 202, 203, 204, 205, 206, 207, 301, 302, 303, 304, 305, 306, 307, 401, 402, 403, 404, 405, 406, 407, 999 };
+black: { 101, 102, 103, 104, 105, 106, 107, 201, 202, 203, 204, 205, 206, 207, 301, 302, 303, 304, 305, 306, 307, 401, 402, 403, 404, 405, 406, 407 };
+turn : boolean;
+
+DEFINE
+notLeft := black=101 | black=201 | black=202 | black=203 | black=301 | black=306 | black=307 | black=401;
+-- fill here
+
+redStart := 203;
+redGoal := 402;
+blkStart := 201;
+
+ASSIGN
+init(turn) := TRUE;
+next(turn) := !turn;
+init(red) := redStart;
+-- fill here
+
+init(black) := blkStart;
+-- fill here
+
+LTLSPEC -- fill here
