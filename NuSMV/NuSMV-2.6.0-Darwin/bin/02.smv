@@ -90,5 +90,5 @@ next(black) :=  case
 (black > 100): {black};
 esac;
 -- fill here
-LTLSPEC -- fill here  테세우스 안잡히면서 red는 goal
-! G ((!(red = black)) U (red = redGoal));
+LTLSPEC -- fill here "goal일때까지 red가 black에게 잡히지 않는 상황은 전체적으로 없다" 
+!G((!(red = black)) U (red = redGoal));
