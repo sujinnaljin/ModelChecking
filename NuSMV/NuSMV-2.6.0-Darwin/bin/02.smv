@@ -1,14 +1,14 @@
--- ���� : 02.lvl
--- �� ũ��: 4  �� ũ��: 7
--- �׼��콺��ġ: 203
--- �̳�Ÿ����ġ: 201
--- ����ġ      : 402
+-- 레벨 : 02.lvl
+-- 행 크기: 4  열 크기: 7
+-- 테세우스위치: 203
+-- 미노타르위치: 201
+-- 골위치      : 402
 MODULE main
 VAR
 red: { 101, 102, 103, 104, 105, 106, 107, 201, 202, 203, 204, 205, 206, 207, 301, 302, 303, 304, 305, 306, 307, 401, 402, 403, 404, 405, 406, 407 };
 black: { 101, 102, 103, 104, 105, 106, 107, 201, 202, 203, 204, 205, 206, 207, 301, 302, 303, 304, 305, 306, 307, 401, 402, 403, 404, 405, 406, 407 };
--- turn : boolean;
-turn : {theseTurn, minoTurn1, minoTurn2};
+turn : boolean;
+
 
 DEFINE
 notLeft := black=101 | black=201 | black=202 | black=203 | black=301 | black=306 | black=307 | black=401;
@@ -28,77 +28,69 @@ redGoal := 402;
 blkStart := 201;
 
 ASSIGN
--- turn 명세
-init(turn) := theseTurn;
-next(turn) := case
-(turn = theseTurn): {minoTurn1};
-(minoTurn1): {minoTurn2};
-(minoTurn2): {theseTurn};
-esac;
-
--- fill here : 테세우스 움직임 명세.
+init(turn) := TRUE;
+next(turn) := !turn;
 init(red) := redStart;
+-- fill here : 테세우스 움직임
 next(red) :=  case
--- (red = 999): {red};
+
 -- 상하좌우 모두 움직일 수 있다
-(!notUpT) & (!notDownT) & (!notLeftT) & (!notRightT) & (turn = theseTurn): {red - 100, red + 100, red - 1, red + 1};
+(!notUpT) & (!notDownT) & (!notLeftT) & (!notRightT) & (turn): {red - 100, red + 100, red - 1, red + 1};
 
 -- 한면이 막혀있다
-(!notUpT) & (!notDownT) & (!notLeftT) & (turn = theseTurn): {red - 100, red + 100, red - 1};
-(!notUpT) & (!notDownT) & (!notRightT) & (turn = theseTurn): {red - 100, red + 100, red + 1};
-(!notUpT) & (!notLeftT) & (!notRightT) & (turn = theseTurn): {red - 100, red - 1, red + 1};
-(!notDownT) & (!notLeftT) & (!notRightT) & (turn = theseTurn): {red + 100, red - 1, red + 1};
+(!notUpT) & (!notDownT) & (!notLeftT) & (turn): {red - 100, red + 100, red - 1};
+(!notUpT) & (!notDownT) & (!notRightT) & (turn): {red - 100, red + 100, red + 1};
+(!notUpT) & (!notLeftT) & (!notRightT) & (turn): {red - 100, red - 1, red + 1};
+(!notDownT) & (!notLeftT) & (!notRightT) & (turn): {red + 100, red - 1, red + 1};
 
 -- 두면이 막혀있다
-(!notUpT) & (!notDownT) & (turn = theseTurn): {red - 100, red + 100};
-(!notUpT) & (!notLeftT)  & (turn = theseTurn): {red - 100, red - 1};
-(!notUpT) & (!notRightT) & (turn = theseTurn): {red - 100, red + 1};
-(!notDownT) & (!notLeftT) & (turn = theseTurn): {red + 100, red - 1};
-(!notDownT) & (!notRightT) & (turn = theseTurn): {red + 100, red + 1};
-(!notLeftT) & (!notRightT) & (turn = theseTurn): {red - 1, red + 1};
+(!notUpT) & (!notDownT) & (turn): {red - 100, red + 100};
+(!notUpT) & (!notLeftT)  & (turn): {red - 100, red - 1};
+(!notUpT) & (!notRightT) & (turn): {red - 100, red + 1};
+(!notDownT) & (!notLeftT) & (turn): {red + 100, red - 1};
+(!notDownT) & (!notRightT) & (turn): {red + 100, red + 1};
+(!notLeftT) & (!notRightT) & (turn): {red - 1, red + 1};
 
 -- 세면이 막혀있다
-(!notUpT) & (turn = theseTurn): {red - 100};
-(!notDownT) & (turn = theseTurn): {red + 100};
-(!notLeftT) & (turn = theseTurn): {red - 1};
-(!notRightT) & (turn = theseTurn): {red + 1};
+(!notUpT) & (turn): {red - 100};
+(!notDownT) & (turn): {red + 100};
+(!notLeftT) & (turn): {red - 1};
+(!notRightT) & (turn): {red + 1};
 
--- default. 맵이 인코딩 잘 되어있다면 theseTurn 이 false일때 들어갈 것.
+-- default. 맵이 인코딩 잘 되어있다면 turn 이 false일때 들어갈 것.
 (red > 100): {red};
 esac;
 
--- fill here : 미노타우르스 움직임 명세
 init(black) := blkStart;
+-- fill here : 미노타우르스 움직임
+-- 다음 red 위치 기준으로 판단 -> next(red)
 next(black) :=  case
 -- 테세우스가 오른쪽에 있다. & 오른쪽으로 갈 수 있다.
-((red mod 100)  > (black mod 100)) & (!notRight) & (turn != theseTurn) : black + 1;
+((next(red) mod 100)  > (black mod 100)) & (!notRight) : black + 1;
 -- 테세우스가 왼쪽에 있다. & 왼쪽으로 갈 수 있다.
-((red mod 100)  < (black mod 100)) & (!notLeft) & (turn != theseTurn) : black - 1;
+((next(red) mod 100)  < (black mod 100)) & (!notLeft) : black - 1;
 
 -- 좌우로 움직일수 없고 (x위치 같거나, 막혀서 움직일수 없거나, 가면 가까워지지만 막혀있을때) 
 -- 테세우스가 위에 있다 & 위로 갈 수 있다.
-(((red mod 100) = (black mod 100)) |
+(((next(red) mod 100) = (black mod 100)) |
 (notLeft & notRight) |
-(notLeft & ((red mod 100)  < (black mod 100))) |
-(notRight & ((red mod 100)  > (black mod 100)))) &
-((red / 100) < (black / 100)) &
-(!notUp) & 
-(turn != theseTurn) : black - 100;
+(notLeft & ((next(red) mod 100)  < (black mod 100))) |
+(notRight & ((next(red) mod 100)  > (black mod 100)))) &
+((next(red) / 100) < (black / 100)) &
+(!notUp) : black - 100;
 
 -- 좌우로 움직일수 없고 (x위치 같거나, 막혀서 움직일수 없거나, 가면 가까워지지만 막혀있을때) 
 -- 테세우스가 아래에 있다 & 아래로 갈 수 있다.
-(((red mod 100)  = (black mod 100)) |
+(((next(red) mod 100)  = (black mod 100)) |
 (notLeft & notRight) |
-(notLeft & ((red mod 100)  < (black mod 100))) |
-(notRight & ((red mod 100)  > (black mod 100)))) & 
-((red / 100) > (black / 100)) & 
-(!notDown) & 
-(turn != theseTurn) : black + 100;
+(notLeft & ((next(red) mod 100)  < (black mod 100))) |
+(notRight & ((next(red) mod 100)  > (black mod 100)))) & 
+((next(red) / 100) > (black / 100)) & 
+(!notDown) : black + 100;
 
 -- default
 (black > 100): {black};
 esac;
-
-LTLSPEC -- fill here : 검증하고자하는 속성 명세
--- red = redGoal & 테세우스 안잡힘;
+-- fill here
+LTLSPEC -- fill here  테세우스 안잡히면서 red는 goal
 ! G ((!(red = black)) U (red = redGoal));
