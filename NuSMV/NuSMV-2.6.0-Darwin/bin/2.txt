@@ -67,59 +67,59 @@ Trace Type: Counterexample
     turn = TRUE
   -> State: 1.10 <-
     red = 107
+    black = 101
     turn = FALSE
     notUpT = TRUE
-  -> State: 1.11 <-
-    black = 101
-    turn = TRUE
     notUp = TRUE
     notRight = FALSE
+  -> State: 1.11 <-
+    black = 102
+    turn = TRUE
+    notLeft = FALSE
   -> State: 1.12 <-
     red = 207
-    black = 102
+    black = 103
     turn = FALSE
     notUpT = FALSE
-    notLeft = FALSE
   -> State: 1.13 <-
-    black = 103
+    black = 104
     turn = TRUE
   -> State: 1.14 <-
     red = 307
-    black = 104
+    black = 105
     turn = FALSE
     notLeftT = TRUE
   -> State: 1.15 <-
-    black = 105
+    black = 106
     turn = TRUE
   -> State: 1.16 <-
     red = 407
-    black = 106
+    black = 107
     turn = FALSE
     notDownT = TRUE
     notLeftT = FALSE
-  -> State: 1.17 <-
-    black = 107
-    turn = TRUE
     notRight = TRUE
+  -> State: 1.17 <-
+    black = 207
+    turn = TRUE
+    notUp = FALSE
   -> State: 1.18 <-
     red = 406
-    black = 207
+    black = 206
     turn = FALSE
     notUpT = TRUE
     notRightT = FALSE
-    notUp = FALSE
-  -> State: 1.19 <-
-    black = 206
-    turn = TRUE
     notRight = FALSE
-  -> State: 1.20 <-
-    red = 405
+  -> State: 1.19 <-
     black = 306
-    turn = FALSE
-    notUpT = FALSE
+    turn = TRUE
     notDown = TRUE
     notRight = TRUE
     notLeft = TRUE
+  -> State: 1.20 <-
+    red = 405
+    turn = FALSE
+    notUpT = FALSE
   -> State: 1.21 <-
     turn = TRUE
   -> State: 1.22 <-
