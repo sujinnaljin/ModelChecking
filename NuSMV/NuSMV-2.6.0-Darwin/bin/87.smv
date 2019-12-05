@@ -168,19 +168,17 @@ next(black) :=  case
 -- 테세우스가 왼쪽에 있다. & 왼쪽으로 갈 수 있다.
 ((next(red) mod 100)  < (black mod 100)) & (!notLeft) : black - 1;
 
--- 좌우로 움직일수 없고 (x위치 같거나, 막혀서 움직일수 없거나, 가면 가까워지지만 막혀있을때) 
+-- 좌우로 움직일수 없고 (x위치 같거나, 가면 가까워지지만 막혀있을때) 
 -- 테세우스가 위에 있다 & 위로 갈 수 있다.
 (((next(red) mod 100) = (black mod 100)) |
-(notLeft & notRight) |
 (notLeft & ((next(red) mod 100)  < (black mod 100))) |
 (notRight & ((next(red) mod 100)  > (black mod 100)))) &
 ((next(red) / 100) < (black / 100)) &
 (!notUp) : black - 100;
 
--- 좌우로 움직일수 없고 (x위치 같거나, 막혀서 움직일수 없거나, 가면 가까워지지만 막혀있을때) 
+-- 좌우로 움직일수 없고 (x위치 같거나, 가면 가까워지지만 막혀있을때) 
 -- 테세우스가 아래에 있다 & 아래로 갈 수 있다.
 (((next(red) mod 100)  = (black mod 100)) |
-(notLeft & notRight) |
 (notLeft & ((next(red) mod 100)  < (black mod 100))) |
 (notRight & ((next(red) mod 100)  > (black mod 100)))) & 
 ((next(red) / 100) > (black / 100)) & 
